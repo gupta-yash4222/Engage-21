@@ -10,4 +10,7 @@ const stream = (socket) => {
     })
 }
 
-module.exports = stream
+const peers = []
+
+module.exports.stream = stream
+module.exports.peers = peers

@@ -1,4 +1,5 @@
 const socket = io('/')
+//const peers = require('./../stream.js').default
 const videoGrid = document.getElementById('video-grid')
 const sharedScreen = document.getElementById('screenStream')
 const peer = new Peer(undefined, {
@@ -10,7 +11,7 @@ const myVideo = document.createElement('video')
 myVideo.muted = true
 let myVideoStream
 let screenStream
-const peers = {}
+const peers_calls = {}
 const peers_videos = {}
 
 navigator.mediaDevices.getUserMedia({
@@ -31,7 +32,7 @@ navigator.mediaDevices.getUserMedia({
         for(var id of get_keys)
         hostID = id
 
-        peers[hostID] = call
+        peers_calls[hostID] = call
         
         const video = document.createElement('video')
 
@@ -54,9 +55,9 @@ navigator.mediaDevices.getUserMedia({
 })
 
 socket.on('user-disconnected', userID => {
-    if(peers[userID]){
+    if(peers_calls[userID]){
         console.log("gone user", userID)
-        peers[userID].close()
+        peers_calls[userID].close()
         peers_videos[userID].remove()
     }
 
@@ -69,7 +70,7 @@ peer.on('open', id => {
 const stopPlay = document.getElementById('stopPlay')
 stopPlay.addEventListener('click', () => {
     enabled = myVideoStream.getVideoTracks()[0].enabled
-    console.log(enabled)
+    //console.log(enabled)
     if(enabled){
         myVideoStream.getVideoTracks()[0].enabled = false
     }
@@ -99,7 +100,7 @@ startScreenShare.addEventListener('click', () => {
         myScreenStream = mediaStream
         console.log(mediaStream)
         for(var track of mediaStream.getTracks()){
-          console.log("track label", track.label)
+          console.log("track label", track.label == "screen:0:0")
         }
 
         addScreenStream(mediaStream)
@@ -139,11 +140,14 @@ function connectToNewUser(userID, mediaStream){
     })
 
     console.log(userID)
-    peers[userID] = call
+    peers_calls[userID] = call
     peers_videos[userID] = video
 }
 
 function addVideoStream(video, stream){
+    for(var track in stream.getTracks()){
+        console.log("video track labels", track.label)
+    }
     video.srcObject = stream
     video.addEventListener('loadedmetadata', () => {
         video.play()

@@ -28,6 +28,6 @@ app.get('/:roomID', (req, res) => {
     res.render('room.ejs', { roomID: req.params.roomID })
 })
 
-io.on('connection', stream)
+io.on('connection', stream.stream)
 
 server.listen(3000, () => {console.log("Listening to port no. 3000 .....")})
