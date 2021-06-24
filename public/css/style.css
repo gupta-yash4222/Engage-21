@@ -9,9 +9,13 @@ video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 20%;
     border-width: 10ex;
     border: chocolate;
+}
+
+screen {
+    background: #222;
+    margin-top: 400px;
 }
 
 h1 {

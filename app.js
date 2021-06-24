@@ -5,11 +5,15 @@ server = http.Server(app)
 const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
 const stream = require('./stream.js')
+const ExpressPeerServer = require('peer').ExpressPeerServer
 const PeerServer = require('peer').PeerServer;
 const peer_server = PeerServer({port: 3001, path: '/'});
 
 app.set('view-engine', 'ejs')
 app.use('/public', express.static('./public'))
+app.use('/peer', ExpressPeerServer(server, {
+    allow_discovery: true
+}))
 
 app.get('/get', (req, res) => {
     res.write("hello there")
