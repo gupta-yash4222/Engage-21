@@ -1,3 +1,5 @@
+import h from './helper.js'
+
 const socket = io('/')
 //const peers = require('./../stream.js').default
 const videoGrid = document.getElementById('video-grid')
@@ -10,6 +12,7 @@ const peer = new Peer(undefined, {
 const myVideo = document.createElement('video')
 myVideo.muted = true
 let myVideoStream
+let myScreenStream
 let screenStream
 const peers_calls = {}
 const peers_videos = {}
@@ -27,7 +30,7 @@ navigator.mediaDevices.getUserMedia({
         console.log("answering the call. hmmm...")
         call.answer(mediaStream)
         
-        get_keys = call.provider._connections.keys()
+        let get_keys = call.provider._connections.keys()
         let hostID
         for(var id of get_keys)
         hostID = id
@@ -39,7 +42,9 @@ navigator.mediaDevices.getUserMedia({
         peers_videos[hostID] = video
 
         call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream)
+            console.log("stream stream stream", userVideoStream)
+            if(userVideoStream.streamKind && userVideoStream.streamKind == "screen") addScreenStream(userVideoStream)
+            else addVideoStream(video, userVideoStream)
         })
         
 
@@ -49,7 +54,7 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', userID => {
         console.log("User-Connected: ", userID)
         const fc = () => connectToNewUser(userID, mediaStream)
-        timerid = setTimeout(fc, 1000)
+        let timerid = setTimeout(fc, 1000)
     })
 
 })
@@ -69,7 +74,7 @@ peer.on('open', id => {
 
 const stopPlay = document.getElementById('stopPlay')
 stopPlay.addEventListener('click', () => {
-    enabled = myVideoStream.getVideoTracks()[0].enabled
+    let enabled = myVideoStream.getVideoTracks()[0].enabled
     //console.log(enabled)
     if(enabled){
         myVideoStream.getVideoTracks()[0].enabled = false
@@ -80,8 +85,8 @@ stopPlay.addEventListener('click', () => {
 })
 
 const muteUnmute = document.getElementById('muteUnmute')
-stopPlay.addEventListener('click', () => {
-    enabled = myVideoStream.getAudioTracks()[0].enabled
+muteUnmute.addEventListener('click', () => {
+    let enabled = myVideoStream.getAudioTracks()[0].enabled
     console.log(enabled)
     if(enabled){
         myVideoStream.getAudioTracks()[0].enabled = false
@@ -98,12 +103,22 @@ startScreenShare.addEventListener('click', () => {
     }).then(mediaStream => {
         startScreenShare.disabled = true
         myScreenStream = mediaStream
+        console.log(typeof mediaStream)
+        mediaStream.streamKind = "screen"
+        console.log(typeof mediaStream)
         console.log(mediaStream)
         for(var track of mediaStream.getTracks()){
+          track.streamKind = "screen"
+          console.log(track)
           console.log("track label", track.label == "screen:0:0")
         }
 
-        addScreenStream(mediaStream)
+        screenStream = h.addScreenStream(mediaStream)
+
+        for(var id in peer.connections){
+            console.log(mediaStream)
+            if(id) peer.call(id, mediaStream)
+        }
 
         mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
             screenStream.remove()
@@ -145,7 +160,7 @@ function connectToNewUser(userID, mediaStream){
 }
 
 function addVideoStream(video, stream){
-    for(var track in stream.getTracks()){
+    for(var track of stream.getTracks()){
         console.log("video track labels", track.label)
     }
     video.srcObject = stream
@@ -155,12 +170,3 @@ function addVideoStream(video, stream){
     videoGrid.append(video)
 }
 
-function addScreenStream(stream){
-    var screen = document.createElement('video')
-    screen.srcObject = stream
-    screen.addEventListener('loadedmetadata', () => {
-        screen.play()
-    })
-    videoGrid.append(screen)
-    screenStream = screen
-}
