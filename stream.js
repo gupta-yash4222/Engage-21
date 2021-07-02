@@ -1,9 +1,17 @@
-const peers = []
+const rooms = {}
 
 const stream = (socket) => {
     socket.on('join-room', (roomID, userID) => {
-        peers.push(userID)
+
+        if(rooms[roomID]){
+            rooms[roomID].push(userID)
+        }
+        else{
+            rooms[roomID] = [userID]
+        }
+
         console.log(roomID, userID)
+
         socket.join(roomID)
         socket.broadcast.to(roomID).emit('user-connected', userID)
 
@@ -14,4 +22,4 @@ const stream = (socket) => {
 }
 
 module.exports.stream = stream
-module.exports.peers = peers
+module.exports.rooms = rooms

@@ -21,7 +21,8 @@ app.get('/get', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.redirect(`/${uuidV4()}`)
+    //res.redirect(`/${uuidV4()}`)
+    res.render(__dirname + '/views/room.ejs', { roomID: uuidV4()})
 })
 
 app.get('/:roomID', (req, res) => {
