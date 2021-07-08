@@ -1,8 +1,28 @@
 export default {
 
+    addVideoStream(video, stream, videoGrid){
+        console.log(stream)
+        video.srcObject = stream
+        video.addEventListener('loadedmetadata', () => {
+            video.play()
+        })
+        videoGrid.append(video)
+    },
+
     addScreenStream(stream){
-        var screen = document.getElementById('gum-local')
+        //var screen = document.getElementById('gum-local')
+        //screen.attributes.removeNamedItem('hidden')
+
+        var screen = document.createElement('video')
+        screen.setAttribute('width', 712)
+        screen.setAttribute('height', 400)
+
         screen.srcObject = stream
+        screen.addEventListener('loadedmetadata', () => {
+            screen.play()
+        })
+
+        document.getElementById('shared-screen').appendChild(screen)
         return screen
     },
 

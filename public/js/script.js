@@ -25,9 +25,11 @@ window.addEventListener('load', () => {
             console.log("done")
         }
 
+        const roomName = ROOM_ID.split('+')[0]
+        console.log(roomName)
+
         //const socket = io('/')
         const videoGrid = document.getElementById('video-grid')
-        const sharedScreen = document.getElementById('screenStream')
         const peer = new Peer(undefined, {
             host: '/',
             port: '3001'
@@ -35,6 +37,9 @@ window.addEventListener('load', () => {
         
         const myVideo = document.createElement('video')
         myVideo.muted = true
+        myVideo.setAttribute('width', 300)
+        myVideo.setAttribute('height', 300)
+
         
         let myVideoStream     // stores the current user's mediastream
         let myScreenStream    // stores the current user's screen mediastream
@@ -43,15 +48,16 @@ window.addEventListener('load', () => {
         const peers_calls = {}   // mapping userID to respective calls 
         const peers_videos = {}  // mapping userID to respective "video" element
         const peers_screens = {} // mapping userID to respective "screen" elements
+        var sharedScreen
         
         navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
         }).then(mediaStream => {
             myVideoStream = mediaStream
-            console.log(mediaStream)
+            //console.log(mediaStream)
         
-            addVideoStream(myVideo, mediaStream)
+            h.addVideoStream(myVideo, mediaStream, videoGrid)
         
             peer.on('call', call => {
                 console.log("answering the call. hmmm...")
@@ -67,17 +73,49 @@ window.addEventListener('load', () => {
                 }
                 
                 const video = document.createElement('video')
+                video.setAttribute('widht', 300)
+                video.setAttribute('height', 300)
+                var count = 0
         
                 call.on('stream', userVideoStream => {
-                    if(userVideoStream.streamKind && userVideoStream.streamKind == "screen") addScreenStream(userVideoStream)
-                    else addVideoStream(video, userVideoStream)
+                    console.log("here!!!!!!@##@@")
+                    count++ 
+                    //if(userVideoStream.streamKind && userVideoStream.streamKind == "screen") addScreenStream(userVideoStream)
+                    //else h.addVideoStream(video, userVideoStream, videoGrid)
 
-                    if(peers_videos[hostID]) peers_screens[hostID] = video
-                    else peers_videos[hostID] = video
+                    console.log(count)
+
+                    if(count==1 && peers_videos[hostID]){
+                        sharedScreen = h.addScreenStream(userVideoStream)
+                    }
+
+                    else{
+                        h.addVideoStream(video, userVideoStream, videoGrid)
+                        if(!peers_videos[hostID]) peers_videos[hostID] = video
+                    }
+
+                    //if(peers_videos[hostID]) peers_screens[hostID] = video
+                    //else peers_videos[hostID] = video
                 })
+
+                /*
                 
-        
-                //console.log(call.provider._connections.keys())
+                    h.addVideoStream(video, userVideoStream, videoGrid)
+
+                    if(peers_videos[hostID]){
+                        console.log("haha")
+                        //var screen = h.addScreenStream(userVideoStream)
+                        peers_screens[hostID] = screen                   }
+
+                    else{
+                        console.log("hihi")
+                        //h.addVideoStream(video, userVideoStream, videoGrid)
+                        peers_videos[hostID] = video
+                    }
+
+                    console.log("hoho")
+                */
+
             })
         
             socket.on('user-connected', userID => {
@@ -90,68 +128,94 @@ window.addEventListener('load', () => {
         
         socket.on('user-disconnected', userID => {
             if(peers_calls[userID]){
-                console.log("gone user", userID)
                 peers_calls[userID].close()
                 peers_videos[userID].remove()
             }
         
         })
+
+        socket.on('screen-stream-ended', () => {
+            console.log("screen stopped!!")
+            sharedScreen.remove()
+        })
+
         
         peer.on('open', id => {
             socket.emit('join-room', ROOM_ID, id)
         })
         
-        const stopPlay = document.getElementById('stopPlay')
+        // Toggling user's video on/off
+        const stopPlay = document.getElementById('stop-play')
+
+        //if(myVideoStream.getVideoTracks()[0].enabled) stopPlay.innerHTML = "Stop"
+        //else stopPlay.innerHTML = "Play"
+
         stopPlay.addEventListener('click', () => {
             let enabled = myVideoStream.getVideoTracks()[0].enabled
-            //console.log(enabled)
+
             if(enabled){
                 myVideoStream.getVideoTracks()[0].enabled = false
+                stopPlay.innerHTML = "Play"
             }
+
             else{
                 myVideoStream.getVideoTracks()[0].enabled = true
+                stopPlay.innerHTML = "Stop"
             }
         })
         
-        const muteUnmute = document.getElementById('muteUnmute')
+        // Muting-Unmuting user's audio
+        const muteUnmute = document.getElementById('mute-unmute')
+
+        //if(myVideoStream.getAudioTracks()[0].enabled) muteUnmute.innerHTML = "Mute"
+        //else muteUnmute.innerHTML = "Unmute"
+
         muteUnmute.addEventListener('click', () => {
             let enabled = myVideoStream.getAudioTracks()[0].enabled
-            console.log(enabled)
+
             if(enabled){
                 myVideoStream.getAudioTracks()[0].enabled = false
+                muteUnmute.innerHTML = "Unmute"
             }
+
             else{
                 myVideoStream.getAudioTracks()[0].enabled = true
+                muteUnmute.innerHTML = "Mute"
             }
         })
         
+        // Sharing the user's screen with other peers
         const startScreenShare = document.getElementById('startScreenShare')
         startScreenShare.addEventListener('click', () => {
             navigator.mediaDevices.getDisplayMedia({
                 video: true
             }).then(mediaStream => {
+
                 startScreenShare.disabled = true
                 myScreenStream = mediaStream
-                console.log(typeof mediaStream)
+
+                /******** DEBUGGER STARTS ***********/
+                //console.log(typeof mediaStream)
                 mediaStream.streamKind = "screen"
-                console.log(typeof mediaStream)
-                console.log(mediaStream)
+                //console.log(typeof mediaStream)
+                //console.log(mediaStream)
                 for(var track of mediaStream.getTracks()){
                   track.streamKind = "screen"
-                  console.log(track)
-                  console.log("track label", track.label == "screen:0:0")
+                  //console.log(track)
+                  //console.log("track label", track.label == "screen:0:0")
                 }
+                /******** DEBUGGER ENDS ************/
         
                 screenStream = h.addScreenStream(mediaStream)
         
                 for(var id in peer.connections){
-                    console.log(mediaStream)
                     if(id) peer.call(id, mediaStream)
                 }
         
                 mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
                     screenStream.remove()
                     startScreenShare.disabled = false
+                    socket.emit('screen-stream-ended', ROOM_ID)
                 })
             })
         })
@@ -160,7 +224,7 @@ window.addEventListener('load', () => {
             startScreenShare.disabled = false;
           } else {
             errorMsg('getDisplayMedia is not supported');
-          }
+        }
         
         
         function connectToNewUser(userID, mediaStream){
@@ -169,13 +233,15 @@ window.addEventListener('load', () => {
         
             var call = peer.call(userID, mediaStream)
             const video = document.createElement('video')
+            video.setAttribute('width', 300)
+            video.setAttribute('height', 300)
         
             //console.log(call)
             //console.log("Here we are!!")
         
             call.on('stream', userVideoStream => {
                 //console.log(`${userID} video getting added`)
-                addVideoStream(video, userVideoStream)
+                h.addVideoStream(video, userVideoStream, videoGrid)
             })
             
             call.on('close', () => {
@@ -187,17 +253,7 @@ window.addEventListener('load', () => {
             peers_calls[userID] = call
             peers_videos[userID] = video
         }
-        
-        function addVideoStream(video, stream){
-            for(var track of stream.getTracks()){
-                console.log("video track labels", track.label)
-            }
-            video.srcObject = stream
-            video.addEventListener('loadedmetadata', () => {
-                video.play()
-            })
-            videoGrid.append(video)
-        }
+
 
 
     }

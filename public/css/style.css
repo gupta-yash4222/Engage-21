@@ -6,8 +6,6 @@
 }
 
 video {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
     border-width: 10ex;
     border: chocolate;
