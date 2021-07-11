@@ -18,12 +18,19 @@ const stream = (socket) => {
         socket.on('disconnect', () => {
             socket.broadcast.to(roomID).emit('user-disconnected', userID)
         })
+
+        socket.on('screen-stream-ended', () => {
+            socket.broadcast.to(roomID).emit('screen-stream-ended')
+        })
+
     })
 
+    /*
     socket.on('screen-stream-ended', (roomID) => {
         socket.join(roomID)
         socket.broadcast.to(roomID).emit('screen-stream-ended')
     })
+    */
 }
 
 module.exports.stream = stream

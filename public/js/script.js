@@ -147,9 +147,6 @@ window.addEventListener('load', () => {
         // Toggling user's video on/off
         const stopPlay = document.getElementById('stop-play')
 
-        //if(myVideoStream.getVideoTracks()[0].enabled) stopPlay.innerHTML = "Stop"
-        //else stopPlay.innerHTML = "Play"
-
         stopPlay.addEventListener('click', () => {
             let enabled = myVideoStream.getVideoTracks()[0].enabled
 
@@ -166,9 +163,6 @@ window.addEventListener('load', () => {
         
         // Muting-Unmuting user's audio
         const muteUnmute = document.getElementById('mute-unmute')
-
-        //if(myVideoStream.getAudioTracks()[0].enabled) muteUnmute.innerHTML = "Mute"
-        //else muteUnmute.innerHTML = "Unmute"
 
         muteUnmute.addEventListener('click', () => {
             let enabled = myVideoStream.getAudioTracks()[0].enabled
@@ -215,7 +209,8 @@ window.addEventListener('load', () => {
                 mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
                     screenStream.remove()
                     startScreenShare.disabled = false
-                    socket.emit('screen-stream-ended', ROOM_ID)
+                    //socket.emit('screen-stream-ended', ROOM_ID)
+                    socket.emit('screen-stream-ended')
                 })
             })
         })
@@ -228,24 +223,16 @@ window.addEventListener('load', () => {
         
         
         function connectToNewUser(userID, mediaStream){
-        
-            //console.log(typeof(mediaStream))
-        
             var call = peer.call(userID, mediaStream)
             const video = document.createElement('video')
             video.setAttribute('width', 300)
             video.setAttribute('height', 300)
         
-            //console.log(call)
-            //console.log("Here we are!!")
-        
             call.on('stream', userVideoStream => {
-                //console.log(`${userID} video getting added`)
                 h.addVideoStream(video, userVideoStream, videoGrid)
             })
             
             call.on('close', () => {
-                //console.log("goone")
                 video.remove()
             })
         
