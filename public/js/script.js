@@ -49,13 +49,26 @@ window.addEventListener('load', () => {
         const peers_videos = {}  // mapping userID to respective "video" element
         const peers_screens = {} // mapping userID to respective "screen" elements
         var sharedScreen
+
+        const sendMsg = (msg) => {
+            let data = {
+                room: ROOM_ID,
+                msg: msg,
+                sender: username
+            }
+
+            //emit chat message-details
+            socket.emit( 'chat', data )
+
+            //add local chat
+            h.addChat( data, 'local')
+        }
         
         navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
         }).then(mediaStream => {
             myVideoStream = mediaStream
-            //console.log(mediaStream)
         
             h.addVideoStream(myVideo, mediaStream, videoGrid)
         
@@ -80,8 +93,6 @@ window.addEventListener('load', () => {
                 call.on('stream', userVideoStream => {
                     console.log("here!!!!!!@##@@")
                     count++ 
-                    //if(userVideoStream.streamKind && userVideoStream.streamKind == "screen") addScreenStream(userVideoStream)
-                    //else h.addVideoStream(video, userVideoStream, videoGrid)
 
                     console.log(count)
 
@@ -93,28 +104,7 @@ window.addEventListener('load', () => {
                         h.addVideoStream(video, userVideoStream, videoGrid)
                         if(!peers_videos[hostID]) peers_videos[hostID] = video
                     }
-
-                    //if(peers_videos[hostID]) peers_screens[hostID] = video
-                    //else peers_videos[hostID] = video
                 })
-
-                /*
-                
-                    h.addVideoStream(video, userVideoStream, videoGrid)
-
-                    if(peers_videos[hostID]){
-                        console.log("haha")
-                        //var screen = h.addScreenStream(userVideoStream)
-                        peers_screens[hostID] = screen                   }
-
-                    else{
-                        console.log("hihi")
-                        //h.addVideoStream(video, userVideoStream, videoGrid)
-                        peers_videos[hostID] = video
-                    }
-
-                    console.log("hoho")
-                */
 
             })
         
@@ -145,38 +135,73 @@ window.addEventListener('load', () => {
         })
         
         // Toggling user's video on/off
-        const stopPlay = document.getElementById('stop-play')
+        document.getElementById('toggle-video').addEventListener('click', (e) => {
+            e.preventDefault()
 
-        stopPlay.addEventListener('click', () => {
             let enabled = myVideoStream.getVideoTracks()[0].enabled
+
+            let elem = document.getElementById('toggle-video')
+            let icon = document.getElementById('video-icon')
+            let textElem = document.getElementById('stop-play')
 
             if(enabled){
                 myVideoStream.getVideoTracks()[0].enabled = false
-                stopPlay.innerHTML = "Play"
+                icon.classList.remove('fa-video')
+                icon.classList.add('fa-video-slash')
+                textElem.innerHTML = "Start Video"
+                elem.setAttribute( 'title', 'Start Video' )
             }
 
             else{
                 myVideoStream.getVideoTracks()[0].enabled = true
-                stopPlay.innerHTML = "Stop"
+                icon.classList.remove('fa-video-slash')
+                icon.classList.add('fa-video')
+                textElem.innerHTML = "Stop Video"
+                elem.setAttribute( 'title', 'Stop Video' )
             }
         })
         
         // Muting-Unmuting user's audio
-        const muteUnmute = document.getElementById('mute-unmute')
+        document.getElementById('toggle-audio').addEventListener('click', (e) => {
+            e.preventDefault()
 
-        muteUnmute.addEventListener('click', () => {
             let enabled = myVideoStream.getAudioTracks()[0].enabled
+
+            let elem = document.getElementById('toggle-audio')
+            let icon = document.getElementById('audio-icon')
+            let textElem = document.getElementById('mute-unmute')
 
             if(enabled){
                 myVideoStream.getAudioTracks()[0].enabled = false
-                muteUnmute.innerHTML = "Unmute"
+                icon.classList.remove('fa-microphone')
+                icon.classList.add('fa-microphone-slash')
+                textElem.innerHTML = "Unmute"
+                elem.setAttribute( 'title', 'Unmute' )
             }
 
             else{
                 myVideoStream.getAudioTracks()[0].enabled = true
-                muteUnmute.innerHTML = "Mute"
+                icon.classList.remove('fa-microphone-slash')
+                icon.classList.add('fa-microphone')
+                textElem.innerHTML = "Mute"
+                elem.setAttribute( 'title', 'Mute' )
             }
         })
+
+
+        //Chat textarea
+        document.getElementById( 'chat-input' ).addEventListener( 'keypress', ( e ) => {
+            if ( e.which === 13 && ( e.target.value.trim() ) ) {
+                e.preventDefault()
+
+                sendMsg( e.target.value )
+
+                setTimeout( () => {
+                    e.target.value = ''
+                }, 50 )
+            }
+        } )
+
         
         // Sharing the user's screen with other peers
         const startScreenShare = document.getElementById('startScreenShare')

@@ -26,11 +26,8 @@
     <script type="module" src = "..\public\js\events.js" defer></script>
 
 </head>
-<body>
+<body style="background-color: 	#282828;" >
 
-    <nav class="navbar bg-dark rounded-0 d-print-none">
-        <div class="text-white"> Engage Video Call </div>
-    </nav>
 
     <div class="container-fluid" id='room-create' hidden>
         <div class="row">
@@ -85,27 +82,83 @@
     <div class = "container-fluid room-comm" hidden>
         <div id="video-grid"></div>
 
-        <button id="startScreenShare">Share Screen</button>
 
-        <button id="stop-play">Stop</button>
-
-        <button id="mute-unmute">Mute</button>
-
-        <button id="toggle-chat-pane">Chat</button>
 
         <div id="shared-screen">
 
         </div>
 
-        <video id="gum-local" width="400" height="300" autoplay playsinline muted hidden>
-            <source src = "https://www.youtube.com/embed/JhyY8LdAQHU">
-        </video> 
+        <div class="row">
+            <div class="col-3 chat-col d-print-none mb-2 bg-light" id='chat-pane' hidden>
+                <div class="row">
+                    <div class="col-12 text-center text-black mb-3"><b>Chat</b></div>
+                </div>
+
+                <div id='chat-messages'></div>
+
+                <div class="row">
+                    <textarea id='chat-input' class="form-control rounded-0 chat-box border-info" rows='3' placeholder="Type here..."></textarea>
+                </div>
+            </div>
+        </div>
+
+
+
+
     </div>
 
 
-    <nav class="navbar fixed-bottom bg-dark">
-        <div class="text=white">hihi</div>
+    <nav class="navbar fixed-bottom room-comm py-0" style="background-color: #181818;" hidden>
+
+        <div class="pull-left room-comm" hidden>
+
+            <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-audio' title="Mute">
+                <i class="fa fa-microphone fa-lg text-white" id="audio-icon"></i>
+                <div class="text-white" id="mute-unmute">Mute</div>
+            </button>
+
+            <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Stop Video">
+                <i class="fa fa-video fa-lg text-white" id="video-icon"> </i>
+                <div class="text-white" id="stop-play">Stop Video</div>
+            </button>
+        </div>
+
+        <div class="mx-auto order-0">
+
+            <!---
+            <button type="button" class="btn btn-success btn-sm btn-no-effect text-white" id="startScreenShare">Share Screen</button>
+            --->
+
+            <button class="btn btn-sm rounded-0 btn-no-effect" id='users-list' title="Participants' List">
+                <i class="fa fa-users fa-lg text-white"></i>
+                <div class="text-white">Participants</div>
+            </button>
+
+            <button class="btn btn-sm rounded-0 btn-no-effect" id='startScreenShare' title="Share screen">
+                <i class="fa fa-desktop fa-lg text-white"></i>
+                <div class="text-white">Share Screen</div>
+            </button>
+
+            <button type="button" class="btn btn-sm btn-no-effect" id='toggle-chat-pane' title="Chat">
+                <i class="fa fa-comment fa-lg text-white"></i> <span class="badge badge-danger very-small font-weight-lighter" id='new-chat-notification' hidden>New</span>
+                <div class="text-white">Chat</div>
+            </button>
+
+        </div>
+
+        <div class="pull-right room-comm" hidden>
+            <button type="button" class="btn btn-danger btn-sm text-white" id="leave">
+                Leave Meeting
+            </button>
+        </div>
     </nav>
+
+    <script>
+        document.getElementById('leave').addEventListener('click', (e) => {
+            e.preventDefault()
+            window.location.replace('/')
+        })
+    </script>
 
     
 </body>
