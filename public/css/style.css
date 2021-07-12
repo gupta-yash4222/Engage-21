@@ -43,6 +43,15 @@ h1 {
     -moz-transition: all 0.3s ease !important;
 }
 
+.chat-col.list-opened {
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.3s ease !important;
+    -webkit-transition: all 0.3s ease !important;
+    -moz-transition: all 0.3s ease !important;
+}
+
 #chat-messages{
     height: 70vh;
     margin-bottom: 20px;
@@ -206,6 +215,7 @@ h1 {
 }
 
 
+
 @keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
@@ -222,6 +232,10 @@ h1 {
     }
   
     .chat-opened::-webkit-scrollbar {
+        display: none;
+    }
+
+    .list-opened::-webkit-scrollbar {
         display: none;
     }
 

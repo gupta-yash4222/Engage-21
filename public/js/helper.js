@@ -2,6 +2,7 @@ export default {
 
     addVideoStream(video, stream, videoGrid){
         console.log(stream)
+
         video.srcObject = stream
         video.addEventListener('loadedmetadata', () => {
             video.play()
@@ -11,7 +12,7 @@ export default {
 
     addScreenStream(stream){
 
-        var screen = document.createElement('video')
+        let screen = document.createElement('video')
         screen.setAttribute('width', 712)
         screen.setAttribute('height', 400)
 
@@ -65,13 +66,24 @@ export default {
             this.toggleChatNotificationBadge()
         }
 
+        if(senderType === 'left-meeting') {
+            contentAlign = 'justify-content-center'
+            senderName = data.sender
+            msgBg = 'bg-info'
+            data.msg = data.sender + ' left the meeting'
+
+            this.toggleChatNotificationBadge()
+        }
+
         let infoDiv = document.createElement( 'div' )
         infoDiv.className = 'sender-info'
-        infoDiv.innerHTML = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
+        if(senderType !== 'left-meeting') infoDiv.innerHTML = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
+        else infoDiv.innerHTML = `${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
 
         let colDiv = document.createElement( 'div' )
         colDiv.className = `col-10 card chat-card msg ${ msgBg }`
-        colDiv.innerHTML = xssFilters.inHTMLData( data.msg ).autoLink( { target: "_blank", rel: "nofollow"})
+        //colDiv.innerHTML = xssFilters.inHTMLData( data.msg ).autoLink( { target: "_blank", rel: "nofollow"})
+        colDiv.innerHTML = data.msg
 
         let rowDiv = document.createElement( 'div' )
         rowDiv.className = `row ${ contentAlign } mb-2`
@@ -101,6 +113,23 @@ export default {
         else {
             document.querySelector( '#new-chat-notification' ).removeAttribute( 'hidden' )
         }
+    },
+
+
+    addParticipant(username) {
+        console.log(username)
+
+        let userDiv = document.querySelector('#participant')
+
+        let rowDiv = document.createElement( 'div' )
+        rowDiv.className = `row justify-content-center mb-2`
+
+        let colDiv = document.createElement( 'div' )
+        colDiv.className = `col-10 bg-light`
+        colDiv.innerHTML = username
+
+        rowDiv.appendChild( colDiv )
+        userDiv.appendChild( rowDiv )
     }
 
 }

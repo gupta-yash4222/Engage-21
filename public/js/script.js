@@ -45,10 +45,11 @@ window.addEventListener('load', () => {
         let myScreenStream    // stores the current user's screen mediastream
         let screenStream      // stores the current user's screen-video element
         
+        const peers_names = {}   // mapping userID to respective user's name
         const peers_calls = {}   // mapping userID to respective calls 
         const peers_videos = {}  // mapping userID to respective "video" element
         const peers_screens = {} // mapping userID to respective "screen" elements
-        var sharedScreen
+        let sharedScreen
 
         const sendMsg = (msg) => {
             let data = {
@@ -86,9 +87,9 @@ window.addEventListener('load', () => {
                 }
                 
                 const video = document.createElement('video')
-                video.setAttribute('widht', 300)
+                video.setAttribute('width', 300)
                 video.setAttribute('height', 300)
-                var count = 0
+                let count = 0
         
                 call.on('stream', userVideoStream => {
                     console.log("here!!!!!!@##@@")
@@ -108,20 +109,28 @@ window.addEventListener('load', () => {
 
             })
         
-            socket.on('user-connected', userID => {
+            socket.on('user-connected', (userID, username) => {
                 console.log("User-Connected: ", userID)
+                peers_names[userID] = username
+                h.addParticipant(username)
                 const fc = () => connectToNewUser(userID, mediaStream)
                 let timerid = setTimeout(fc, 1000)
             })
         
         })
         
-        socket.on('user-disconnected', userID => {
+        socket.on('user-disconnected', (userID, username) => {
             if(peers_calls[userID]){
                 peers_calls[userID].close()
                 peers_videos[userID].remove()
             }
+
+            h.addChat({ sender: username, msg: "Left"}, 'left-meeting')
         
+        })
+
+        socket.on('chat', data => {
+            h.addChat(data, 'remote')
         })
 
         socket.on('screen-stream-ended', () => {
@@ -131,7 +140,7 @@ window.addEventListener('load', () => {
 
         
         peer.on('open', id => {
-            socket.emit('join-room', ROOM_ID, id)
+            socket.emit('join-room', ROOM_ID, id, username)
         })
         
         // Toggling user's video on/off
@@ -249,6 +258,7 @@ window.addEventListener('load', () => {
         
         function connectToNewUser(userID, mediaStream){
             var call = peer.call(userID, mediaStream)
+
             const video = document.createElement('video')
             video.setAttribute('width', 300)
             video.setAttribute('height', 300)

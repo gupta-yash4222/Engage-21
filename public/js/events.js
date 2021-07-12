@@ -1,4 +1,4 @@
-
+import h from './helper.js'
 
 window.addEventListener('load', () => {
 
@@ -60,8 +60,9 @@ window.addEventListener('load', () => {
 
     //When the chat icon is clicked
     document.getElementById( 'toggle-chat-pane' ).addEventListener( 'click', ( e ) => {
-        console.log("here we are for chatting")
+
         let chatElem = document.querySelector( '#chat-pane' )
+        let listElem = document.querySelector('#participants-list')
         let mainSecElem = document.querySelector( '#main-section' )
 
         if ( chatElem.classList.contains( 'chat-opened' ) ) {
@@ -72,6 +73,12 @@ window.addEventListener('load', () => {
         }
 
         else {
+
+            if(listElem.classList.contains( 'list-opened' )) {
+                listElem.setAttribute( 'hidden', true )
+                listElem.classList.remove( 'list-opened' )
+            }
+
             chatElem.attributes.removeNamedItem( 'hidden' )
             //mainSecElem.classList.remove( 'col-md-12' )
             //mainSecElem.classList.add( 'col-md-9' )
@@ -81,9 +88,35 @@ window.addEventListener('load', () => {
         //remove the 'New' badge on chat icon (if any) once chat is opened.
         setTimeout( () => {
             if ( document.querySelector( '#chat-pane' ).classList.contains( 'chat-opened' ) ) {
-                helpers.toggleChatNotificationBadge();
+                h.toggleChatNotificationBadge();
             }
         }, 300 )
     } )
+
+    //Participants list
+    document.getElementById('toggle-participants-list').addEventListener('click', e => {
+        e.preventDefault()
+        console.log("see us")
+
+        let listElem = document.querySelector('#participants-list')
+        let chatElem = document.querySelector( '#chat-pane' )
+
+        if(listElem.classList.contains('list-opened')) {
+            listElem.setAttribute('hidden', true)
+            listElem.classList.remove('list-opened')
+        }
+
+        else {
+            if(chatElem.classList.contains( 'chat-opened' )) {
+                chatElem.setAttribute( 'hidden', true )
+                chatElem.classList.remove( 'chat-opened' )
+            }
+
+            listElem.attributes.removeNamedItem('hidden')
+            listElem.classList.add('list-opened')
+
+        }
+
+    })
 
 })

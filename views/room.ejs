@@ -22,7 +22,6 @@
     <script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
 
     <script type="module" src = "..\public\js\script.js" defer></script>
-    <script type="module" src = "..\public\js\helper.js" defer></script>
     <script type="module" src = "..\public\js\events.js" defer></script>
 
 </head>
@@ -97,9 +96,18 @@
                 <div id='chat-messages'></div>
 
                 <div class="row">
-                    <textarea id='chat-input' class="form-control rounded-0 chat-box border-info" rows='3' placeholder="Type here..."></textarea>
+                    <textarea id='chat-input' class="form-control rounded-0 chat-box border-info" rows='3' placeholder="Type message here..."></textarea>
                 </div>
             </div>
+
+            <div class="col-3 chat-col d-print-none mb-2 bg-light" id="participants-list" hidden>
+                <div class="row">
+                    <div class="col-12 text-center text-black mb-3"><b>Participants</b></div>
+                </div>
+
+                <div id="participant"></div>
+            </div>
+
         </div>
 
 
@@ -129,7 +137,7 @@
             <button type="button" class="btn btn-success btn-sm btn-no-effect text-white" id="startScreenShare">Share Screen</button>
             --->
 
-            <button class="btn btn-sm rounded-0 btn-no-effect" id='users-list' title="Participants' List">
+            <button type="button" class="btn btn-sm btn-no-effect" id='toggle-participants-list' title="Participants' List">
                 <i class="fa fa-users fa-lg text-white"></i>
                 <div class="text-white">Participants</div>
             </button>
