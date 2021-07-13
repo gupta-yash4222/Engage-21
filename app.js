@@ -23,7 +23,7 @@ const ExpressPeerServer = require('peer').ExpressPeerServer
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
 app.use('/public', express.static('./public'))
-app.use('/peer', ExpressPeerServer(server, {
+app.use('/peerjs', ExpressPeerServer(server, {
     debug: true, 
     allow_discovery: true
 }))
