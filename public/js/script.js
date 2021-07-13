@@ -50,7 +50,7 @@ window.addEventListener('load', () => {
         const peers_calls = {}   // mapping userID to respective calls 
         const peers_videos = {}  // mapping userID to respective "video" element
         const peers_screens = {} // mapping userID to respective "screen" elements
-        const recordedStream = [] 
+        let recordedStream = [] 
         let sharedScreen
 
         const sendMsg = (msg) => {
@@ -149,17 +149,20 @@ window.addEventListener('load', () => {
 
         function toggleRecordIcon( isRecording ){
             let recordElem = document.getElementById('record')
+            let pauseElem = document.getElementById('pause-play-recorder')
 
             if(isRecording){
                 recordElem.setAttribute('title', 'Stop recording')
                 recordElem.children[0].classList.remove('text-white')
                 recordElem.children[0].classList.add('text-danger')
+                pauseElem.attributes.removeNamedItem('hidden')
             }
 
             else {
                 recordElem.setAttribute('title', 'Record')
                 recordElem.children[0].classList.remove('text-danger')
                 recordElem.children[0].classList.add('text-white') 
+                pauseElem.setAttribute('hidden', true)
             }
         }
 
@@ -265,7 +268,7 @@ window.addEventListener('load', () => {
         document.getElementById('record').addEventListener('click', e => {
             e.preventDefault()
 
-            if( !mediaRecorder || mediaRecorder === 'inactive') {
+            if( !mediaRecorder || mediaRecorder.state === 'inactive') {
 
                 if( myScreenStream && myScreenStream.getVideoTracks().length ) {
                     startRecording(myScreenStream)
@@ -280,12 +283,13 @@ window.addEventListener('load', () => {
                 }
 
             }
-
+            /*
             else if( mediaRecorder.state === 'paused'){
                 mediaRecorder.resume()
             }
+            */
 
-            else if (mediaRecorder.state === 'recording') {
+            else if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop()
             }
 
@@ -295,12 +299,22 @@ window.addEventListener('load', () => {
         document.getElementById('pause-play-recorder').addEventListener('click', e => {
             e.preventDefault()
 
+            let pauseElem = document.getElementById('pause-play-recorder')
+
             if(mediaRecorder.state === 'recording') {
                 mediaRecorder.pause()
+                pauseElem.setAttribute('title', 'Resume recording')
+                pauseElem.children[0].classList.remove('fa-pause')
+                pauseElem.children[0].classList.add('fa-play')
+                pauseElem.children[1].innerHTML = 'Resume recording'
             }
 
-            else if (mediaRecorder.state === 'pause') {
+            else if (mediaRecorder.state === 'paused') {
                 mediaRecorder.resume()
+                pauseElem.setAttribute('title', 'Pause Recording')
+                pauseElem.children[0].classList.remove('fa-play')
+                pauseElem.children[0].classList.add('fa-pause')
+                pauseElem.children[1].innerHTML = 'Pause recording'
             }
         })
 
