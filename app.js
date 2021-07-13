@@ -1,6 +1,3 @@
-if (process.env.NODE_ENV !== 'production'){
-    require('dotenv').config()
-}
 
 const express = require('express');
 const app = express();
@@ -17,8 +14,11 @@ const cookieParser = require('cookie-parser')
 const stream = require('./stream.js')
 const ExpressPeerServer = require('peer').ExpressPeerServer
 
-//const PeerServer = require('peer').PeerServer;
-//const peer_server = PeerServer({port: 3001, path: '/'})
+if (process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+    const PeerServer = require('peer').PeerServer;
+    const peer_server = PeerServer({port: 3001, path: '/'})
+}
 
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
@@ -48,7 +48,7 @@ app.get('/get', (req, res) => {
 
 app.get('/', (req, res) => {
     //res.redirect(`/${uuidV4()}`)
-    res.render(__dirname + '/views/room.ejs', { roomID: uuidV4()})
+    res.render(__dirname + '/views/room.ejs', { roomID: uuidV4(), appStatus: process.env.NODE_ENV})
 })
 
 const userRouter = require('./routes/user')
