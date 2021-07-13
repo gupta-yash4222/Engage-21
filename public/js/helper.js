@@ -3,6 +3,8 @@ export default {
     addVideoStream(video, stream, videoGrid){
         console.log(stream)
 
+        if(stream.name) console.log("name of the streamer currently is - ", stream.name)
+
         video.srcObject = stream
         video.addEventListener('loadedmetadata', () => {
             video.play()

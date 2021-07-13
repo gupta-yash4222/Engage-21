@@ -22,7 +22,6 @@ window.addEventListener('load', () => {
 
         for(let i = 0; i < commElem.length; i++){
             commElem[i].attributes.removeNamedItem( 'hidden' )
-            console.log("done")
         }
 
         const roomName = ROOM_ID.split('+')[0]
@@ -37,8 +36,8 @@ window.addEventListener('load', () => {
         
         const myVideo = document.createElement('video')
         myVideo.muted = true
-        myVideo.setAttribute('width', 300)
-        myVideo.setAttribute('height', 300)
+        myVideo.setAttribute('width', 200)
+        myVideo.setAttribute('height', 200)
 
         
         let myVideoStream     // stores the current user's mediastream
@@ -71,12 +70,12 @@ window.addEventListener('load', () => {
             video: true,
             audio: true
         }).then(mediaStream => {
+            mediaStream.name = username
             myVideoStream = mediaStream
         
             h.addVideoStream(myVideo, mediaStream, videoGrid)
         
             peer.on('call', call => {
-                console.log("answering the call. hmmm...")
                 call.answer(mediaStream)
                 
                 let get_keys = call.provider._connections.keys()
@@ -89,15 +88,14 @@ window.addEventListener('load', () => {
                 }
                 
                 const video = document.createElement('video')
-                video.setAttribute('width', 300)
-                video.setAttribute('height', 300)
+                video.setAttribute('width', 200)
+                video.setAttribute('height', 200)
                 let count = 0
         
                 call.on('stream', userVideoStream => {
-                    console.log("here!!!!!!@##@@")
                     count++ 
 
-                    console.log(count)
+                    //console.log(count)
 
                     if(count==1 && peers_videos[hostID]){
                         sharedScreen = h.addScreenStream(userVideoStream)
@@ -350,7 +348,6 @@ window.addEventListener('load', () => {
                 mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
                     screenStream.remove()
                     startScreenShare.disabled = false
-                    //socket.emit('screen-stream-ended', ROOM_ID)
                     socket.emit('screen-stream-ended')
                 })
             })
@@ -367,8 +364,8 @@ window.addEventListener('load', () => {
             var call = peer.call(userID, mediaStream)
 
             const video = document.createElement('video')
-            video.setAttribute('width', 300)
-            video.setAttribute('height', 300)
+            video.setAttribute('width', 200)
+            video.setAttribute('height', 200)
         
             call.on('stream', userVideoStream => {
                 h.addVideoStream(video, userVideoStream, videoGrid)
