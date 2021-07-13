@@ -36,8 +36,8 @@ window.addEventListener('load', () => {
         
         const myVideo = document.createElement('video')
         myVideo.muted = true
-        myVideo.setAttribute('width', 200)
-        myVideo.setAttribute('height', 200)
+        myVideo.setAttribute('width', 220)
+        myVideo.setAttribute('height', 220)
 
         
         let myVideoStream     // stores the current user's mediastream
@@ -88,8 +88,8 @@ window.addEventListener('load', () => {
                 }
                 
                 const video = document.createElement('video')
-                video.setAttribute('width', 200)
-                video.setAttribute('height', 200)
+                video.setAttribute('width', 220)
+                video.setAttribute('height', 220)
                 let count = 0
         
                 call.on('stream', userVideoStream => {
@@ -145,6 +145,7 @@ window.addEventListener('load', () => {
         })
 
 
+        // Changing the icon colors or icon themselves when recording starts
         function toggleRecordIcon( isRecording ){
             let recordElem = document.getElementById('record')
             let pauseElem = document.getElementById('pause-play-recorder')
@@ -165,6 +166,7 @@ window.addEventListener('load', () => {
         }
 
 
+        // Starting recrding the user's screen 
         function startRecording( stream ) {
             mediaRecorder = new MediaRecorder( stream, {
                 mimeType: 'video/webm;codecs=vp9'
@@ -326,18 +328,6 @@ window.addEventListener('load', () => {
 
                 startScreenShare.disabled = true
                 myScreenStream = mediaStream
-
-                /******** DEBUGGER STARTS ***********/
-                //console.log(typeof mediaStream)
-                mediaStream.streamKind = "screen"
-                //console.log(typeof mediaStream)
-                //console.log(mediaStream)
-                for(var track of mediaStream.getTracks()){
-                  track.streamKind = "screen"
-                  //console.log(track)
-                  //console.log("track label", track.label == "screen:0:0")
-                }
-                /******** DEBUGGER ENDS ************/
         
                 screenStream = h.addScreenStream(mediaStream)
         
@@ -360,12 +350,13 @@ window.addEventListener('load', () => {
         }
         
         
+        // Connecting to the newly joined user (i.e., sending our MediaStream and asking for the newly connected user's MediaStream)
         function connectToNewUser(userID, mediaStream){
             var call = peer.call(userID, mediaStream)
 
             const video = document.createElement('video')
-            video.setAttribute('width', 200)
-            video.setAttribute('height', 200)
+            video.setAttribute('width', 220)
+            video.setAttribute('height', 220)
         
             call.on('stream', userVideoStream => {
                 h.addVideoStream(video, userVideoStream, videoGrid)
