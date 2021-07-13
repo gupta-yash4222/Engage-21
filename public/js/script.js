@@ -44,11 +44,13 @@ window.addEventListener('load', () => {
         let myVideoStream     // stores the current user's mediastream
         let myScreenStream    // stores the current user's screen mediastream
         let screenStream      // stores the current user's screen-video element
+        let mediaRecorder     // Recording media
         
         const peers_names = {}   // mapping userID to respective user's name
         const peers_calls = {}   // mapping userID to respective calls 
         const peers_videos = {}  // mapping userID to respective "video" element
         const peers_screens = {} // mapping userID to respective "screen" elements
+        const recordedStream = [] 
         let sharedScreen
 
         const sendMsg = (msg) => {
@@ -113,6 +115,7 @@ window.addEventListener('load', () => {
                 console.log("User-Connected: ", userID)
                 peers_names[userID] = username
                 h.addParticipant(username)
+                h.addChat({ sender: username, msg: "Entered" }, 'enter-meeting')
                 const fc = () => connectToNewUser(userID, mediaStream)
                 let timerid = setTimeout(fc, 1000)
             })
@@ -142,6 +145,52 @@ window.addEventListener('load', () => {
         peer.on('open', id => {
             socket.emit('join-room', ROOM_ID, id, username)
         })
+
+
+        function toggleRecordIcon( isRecording ){
+            let recordElem = document.getElementById('record')
+
+            if(isRecording){
+                recordElem.setAttribute('title', 'Stop recording')
+                recordElem.children[0].classList.remove('text-white')
+                recordElem.children[0].classList.add('text-danger')
+            }
+
+            else {
+                recordElem.setAttribute('title', 'Record')
+                recordElem.children[0].classList.remove('text-danger')
+                recordElem.children[0].classList.add('text-white') 
+            }
+        }
+
+
+        function startRecording( stream ) {
+            mediaRecorder = new MediaRecorder( stream, {
+                mimeType: 'video/webm;codecs=vp9'
+            } )
+
+            mediaRecorder.start( 1000 )
+            toggleRecordIcon( true )
+
+            mediaRecorder.ondataavailable = function ( e ) {
+                recordedStream.push( e.data )
+            }
+
+            mediaRecorder.onstop = function () {
+                toggleRecordIcon( false )
+
+                h.saveRecordedStream( recordedStream, username )
+
+                setTimeout( () => {
+                    recordedStream = []
+                }, 3000 )
+            }
+
+            mediaRecorder.onerror = function ( e ) {
+                console.error( e )
+            }
+        }
+
         
         // Toggling user's video on/off
         document.getElementById('toggle-video').addEventListener('click', (e) => {
@@ -210,6 +259,50 @@ window.addEventListener('load', () => {
                 }, 50 )
             }
         } )
+
+
+        // Recording the user's screen
+        document.getElementById('record').addEventListener('click', e => {
+            e.preventDefault()
+
+            if( !mediaRecorder || mediaRecorder === 'inactive') {
+
+                if( myScreenStream && myScreenStream.getVideoTracks().length ) {
+                    startRecording(myScreenStream)
+                }
+
+                else {
+                    navigator.mediaDevices.getDisplayMedia({
+                        video: true
+                    }).then(stream => {
+                        startRecording(stream)
+                    })
+                }
+
+            }
+
+            else if( mediaRecorder.state === 'paused'){
+                mediaRecorder.resume()
+            }
+
+            else if (mediaRecorder.state === 'recording') {
+                mediaRecorder.stop()
+            }
+
+        })
+
+        // Pausing and playing mediaRecorder
+        document.getElementById('pause-play-recorder').addEventListener('click', e => {
+            e.preventDefault()
+
+            if(mediaRecorder.state === 'recording') {
+                mediaRecorder.pause()
+            }
+
+            else if (mediaRecorder.state === 'pause') {
+                mediaRecorder.resume()
+            }
+        })
 
         
         // Sharing the user's screen with other peers

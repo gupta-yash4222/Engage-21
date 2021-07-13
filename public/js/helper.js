@@ -75,9 +75,18 @@ export default {
             this.toggleChatNotificationBadge()
         }
 
+        if(senderType === 'enter-meeting') {
+            contentAlign = 'justify-content-center'
+            senderName = data.sender
+            msgBg = 'bg-info'
+            data.msg = data.sender + ' entered the meeting'
+
+            this.toggleChatNotificationBadge()
+        }
+
         let infoDiv = document.createElement( 'div' )
         infoDiv.className = 'sender-info'
-        if(senderType !== 'left-meeting') infoDiv.innerHTML = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
+        if(senderType !== 'left-meeting' && senderType !== 'enter-meeting') infoDiv.innerHTML = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
         else infoDiv.innerHTML = `${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`
 
         let colDiv = document.createElement( 'div' )
@@ -130,6 +139,15 @@ export default {
 
         rowDiv.appendChild( colDiv )
         userDiv.appendChild( rowDiv )
-    }
+    },
+
+
+    saveRecordedStream( stream, user ) {
+        let blob = new Blob( stream, { type: 'video/webm' } )
+
+        let file = new File( [blob], `${ user }-${ moment().unix() }-record.webm` )
+
+        saveAs( file )
+    },
 
 }
