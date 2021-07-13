@@ -1,5 +1,8 @@
 # ENGAGE-21
 
+Welcome to this **ENGAG**ing video-chat application developed as a part of the **Microsoft Engage 2021** program.\
+This Video-chat application is developed using `Peer.js` (a wrapper of `WebRTC` for smooth implementation of `peer-to-peer` calling), `Socket.io`, `Express.js` and `Node.js`
+
 ### Bug Fixes : 
 
 1. `peer.on('call', ...)` not working i.e. peers are not able to connect with each other. To fix this I took help from this GitHub issue post : [peer.on('call',...) not working](https://github.com/WebDevSimplified/Zoom-Clone-With-WebRTC/issues/52#issuecomment-830641165)
