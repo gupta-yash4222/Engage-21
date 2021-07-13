@@ -28,6 +28,9 @@ window.addEventListener('load', () => {
             //empty the values
             document.querySelector( '#room-name' ).value = ''
             document.querySelector( '#your-name' ).value = ''
+
+            //window.location.assign(roomLink)
+            //alert('Room Successfully created')
         }
 
         else {
