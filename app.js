@@ -31,16 +31,6 @@ app.use(express.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(cookieParser())
 
-const mongoose = require('mongoose')
-mongoose.connect("mongodb://localhost:27017/engage-app", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-})
-const db = mongoose.connection
-db.on('error', error => console.error(error))
-db.once('open', () => console.log("Connected to mongoose"))
-
 app.get('/get', (req, res) => {
     res.write("hello there")
     res.end()
@@ -50,9 +40,6 @@ app.get('/', (req, res) => {
     //res.redirect(`/${uuidV4()}`)
     res.render(__dirname + '/views/room.ejs', { roomID: uuidV4(), appStatus: process.env.NODE_ENV})
 })
-
-const userRouter = require('./routes/user')
-app.use('/api', userRouter)
 
 app.get('/:roomID', (req, res) => {
     res.render('room.ejs', { roomID: req.params.roomID })
