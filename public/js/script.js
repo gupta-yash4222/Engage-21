@@ -30,8 +30,9 @@ window.addEventListener('load', () => {
         //const socket = io('/')
         const videoGrid = document.getElementById('video-grid')
         const peer = new Peer(undefined, {
-            host: '/',
-            port: '3001'
+            secure: true,
+            host: 'https://engage-trial.herokuapp.com/',
+            port: '443'
         })
         
         const myVideo = document.createElement('video')

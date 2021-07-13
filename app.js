@@ -12,8 +12,9 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const stream = require('./stream.js')
 const ExpressPeerServer = require('peer').ExpressPeerServer
+
 const PeerServer = require('peer').PeerServer;
-const peer_server = PeerServer({port: 3001, path: '/'})
+const peer_server = PeerServer({port: 443, path: '/'})
 
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
