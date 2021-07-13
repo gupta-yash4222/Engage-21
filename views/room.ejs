@@ -29,6 +29,17 @@
 
 
     <div class="container-fluid" id='room-create' hidden>
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-info pull-left" style="font-family: Lucida Handwriting, Courier New, monospace; margin-top: 8px; "> Engaging App </h1>
+                <div class="text-white float-right">
+                    Made with love by 
+                    <a href="https://github.com/gupta-yash4222">gupta-yash4222</a>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12 h2 mt-5 text-center text-white">Create Room</div>
         </div>
@@ -39,12 +50,12 @@
             </div>
 
             <div class="col-12 col-md-4 offset-md-4 mb-3">
-                <label for="room-name">Room Name</label>
+                <label class="text-white" for="room-name">Room Name</label>
                 <input type="text" id='room-name' class="form-control rounded-0" placeholder="Room Name">
             </div>
 
             <div class="col-12 col-md-4 offset-md-4 mb-3">
-                <label for="your-name">Your Name</label>
+                <label class="text-white" for="your-name">Your Name</label>
                 <input type="text" id='your-name' class="form-control rounded-0" placeholder="Your Name">
             </div>
 
@@ -54,9 +65,35 @@
 
             <div class="col-12 col-md-4 offset-md-4 mb-3 text-white" id='room-created'></div>
         </div>
+
+        <div class="row">
+            <div class="col-12 h2 mt-5 text-center text-white">Join a Room</div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12 text-center">
+                <span class="form-text small text-danger" id='err-msg-join'></span>
+            </div>
+
+            <div class="col-12 col-md-4 offset-md-4 mb-3">
+                <label class="text-white" for="room-id">Room ID</label>
+                <input type="text" id='room-id' class="form-control rounded-0" placeholder="Room ID">
+            </div>
+
+            <div class="col-12 col-md-4 offset-md-4 mb-3">
+                <button id='join-room' class="btn btn-block rounded-0 btn-info">Join Room</button>
+            </div>
+        </div>
     </div>
 
     <div class="container-fluid" id='username-set' hidden>
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-info pull-left" style="font-family: Lucida Handwriting, Courier New, monospace; margin-top: 8px; "> Engaging App </h1>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12 h4 mt-5 text-center text-white">Join Call</div>
         </div>
@@ -67,7 +104,7 @@
             </div>
 
             <div class="col-12 col-md-4 offset-md-4 mb-3">
-                <label for="username">Your Name</label>
+                <label class="text-white" for="username">Your Name</label>
                 <input type="text" id='username' class="form-control rounded-0" placeholder="Your Name">
             </div>
 
@@ -76,7 +113,6 @@
             </div>
         </div>
     </div>
-
 
     <div class = "container-fluid room-comm" hidden>
         <div id="video-grid"></div>

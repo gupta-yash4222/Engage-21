@@ -1,5 +1,6 @@
 #video-grid {
     display: grid;
+    margin-top: 5px;
     grid-template-columns: repeat(auto-fill, 250px);
     grid-auto-rows: 220px;
     border: chocolate;
@@ -9,6 +10,7 @@ video {
     object-fit: cover;
     border-width: 10ex;
     border: chocolate;
+    border-radius: 10px; 
     margin-right: 5px;
 }
 

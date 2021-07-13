@@ -36,6 +36,27 @@ window.addEventListener('load', () => {
     } )
 
 
+    //When the 'Join a Room' button is clicked.
+    document.getElementById('join-room').addEventListener('click', e => {
+        e.preventDefault()
+
+        let id = document.querySelector('#room-id').value
+
+        if(!id){
+            document.querySelector('#err-msg-join').innerHTML = "Please input the room ID"
+        }
+
+        else {
+            document.querySelector('#err-msg-join').innerHTML = ""
+            
+            let joinLink = `${ location.origin }?room=${id}`
+
+            document.querySelector('#room-id').value = ''
+            window.location.assign(joinLink)
+        }
+    })
+
+
     //When the 'Enter room' button is clicked.
     document.getElementById( 'enter-room' ).addEventListener( 'click', ( e ) => {
         e.preventDefault()
