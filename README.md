@@ -31,7 +31,7 @@ The server is hosted on `port` 3000 and hence to launch the app you will have to
 ## Online Demo
 
 The application is hosted on Heroku Cloud Services. \
-Link to web hosted application: [Engaging App](https://engaging-app.herokuapp.com/, "Engaging App") 
+Link to web hosted application: [Engaging App](https://engaging-app.herokuapp.com/ "Engaging App") 
 
 
-A detailed documentation can be accessed through this link: [Documentation](https://docs.google.com/presentation/d/1qIbruojMDEGyGXxoWxssLRzBxCkmcxLNeIJfDEJMmxQ/edit?usp=sharing, "Documentaion")
+A detailed documentation can be accessed through this link: [Documentation](https://docs.google.com/presentation/d/1qIbruojMDEGyGXxoWxssLRzBxCkmcxLNeIJfDEJMmxQ/edit?usp=sharing "Documentaion")
